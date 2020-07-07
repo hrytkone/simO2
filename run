@@ -1,0 +1,33 @@
+#!/bin/bash
+
+echo "Run O2 detector simulation for given input file ${2}"
+time=$(date)
+echo "Start time : $time"
+
+seed=1000
+jobid=$SLURM_JOB_ID
+seed=$((seed+jobid))
+
+cd ${1}
+
+echo "Processing ${3} events"
+
+#o2-sim -n 1 -m FV0 FT0 -j 1 -e TGeant3 -g pythia8
+#o2-sim --seed $seed -n ${3} -m FV0 FT0 ITS PIPE -e TGeant4 -g extgen --extGenFile=/n/work00/heimarry/simO2/gengen.C --extGenFunc="gengen("\"${DETSIM_DIR}\/${2}\"")"
+#o2-sim --seed $seed -j 8 -n ${3} -m FV0 FT0 ITS PIPE -e TGeant3 -g extgen --extGenFile=/n/work00/heimarry/simO2/gengen.C --extGenFunc="gengen("\"${DETSIM_DIR}\/${2}\"")"
+o2-sim --seed $seed -j 2 -n ${3} -m FV0 FT0 ITS PIPE -e TGeant3 -g extgen --extGenFile=/n/work00/heimarry/simO2/gengen.C --extGenFunc="gengen("\"${DETSIM_DIR}\/${2}\"")"
+
+time=$(date)
+echo "Transportation finished : $time"
+echo "Start digitizer workflow"
+
+o2-sim-digitizer-workflow -b --onlyDet=FV0,FT0
+
+echo "Digitization finished"
+echo "Clean cerenkov photons from kinetimatics file to reduce size"
+
+root -b RemoveCkov.C
+
+echo "Cerenkovs removed"
+echo "Job is finished!"
+
