@@ -74,6 +74,9 @@ class GeneralGenerator : public FairGenerator
                 return kFALSE;
             }
 
+            // AMPT gives the production vertex in fm
+            Double_t fm2cm = pow(10, -15);
+
             // Event variables
             Float_t eventid = 0;
 
@@ -100,7 +103,7 @@ class GeneralGenerator : public FairGenerator
                 if (entry>0) {
                     if ((Int_t)eventid==previd) {
                         //if (!SkipParticle(particleid))
-                            primGen->AddTrack(particleid, px, py, pz, x, y, z);
+                            primGen->AddTrack((Int_t)particleid, (Double_t)px, (Double_t)py, (Double_t)pz, fm2cm*x, fm2cm*y, fm2cm*z);
                     } else {
                         previd = eventid;
                         iStartNewEvent = i;
