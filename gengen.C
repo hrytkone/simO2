@@ -75,7 +75,7 @@ class GeneralGenerator : public FairGenerator
             }
 
             // AMPT gives the production vertex in fm
-            Double_t fm2cm = pow(10, -15);
+            Double_t fm2cm = pow(10, -13);
 
             // Event variables
             Float_t eventid = 0;
@@ -177,7 +177,7 @@ class GeneralGenerator : public FairGenerator
  * @return               The generator
  */
 FairGenerator*
-    gengen(const char* inputFile = "input.root", const char* inputGenType = "ampt")
+    gengen(const char* inputFile = "cent30-35_n93.root", const char* inputGenType = "ampt")
 {
     std::cout << "General generator for data in NTuple format" << std::endl;
     auto gen = new GeneralGenerator(inputFile, inputGenType);
