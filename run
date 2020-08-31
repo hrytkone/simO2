@@ -12,10 +12,7 @@ cd ${1}
 
 echo "Processing ${3} events"
 
-#o2-sim -n 1 -m FV0 FT0 -j 1 -e TGeant3 -g pythia8
-#o2-sim --seed $seed -n ${3} -m FV0 FT0 ITS PIPE -e TGeant4 -g extgen --extGenFile=/n/work00/heimarry/simO2/gengen.C --extGenFunc="gengen("\"${DETSIM_DIR}\/${2}\"")"
-#o2-sim --seed $seed -j 8 -n ${3} -m FV0 FT0 ITS PIPE -e TGeant3 -g extgen --extGenFile=/n/work00/heimarry/simO2/gengen.C --extGenFunc="gengen("\"${DETSIM_DIR}\/${2}\"")"
-o2-sim --seed $seed -j 2 -n ${3} -m FV0 FT0 ITS PIPE -e TGeant3 -g extgen --extGenFile=/n/work00/heimarry/simO2/gengen.C --extGenFunc="gengen("\"${DETSIM_DIR}\/${2}\"")"
+o2-sim --seed $seed -j 12 -n ${3} -m FV0 FT0 PIPE ITS -e TGeant3 -g extgen --extGenFile=/n/work00/heimarry/simO2/gengen.C --extGenFunc="gengen("\"${DETSIM_DIR}\/${2}\"")"
 
 time=$(date)
 echo "Transportation finished : $time"
@@ -26,7 +23,12 @@ o2-sim-digitizer-workflow -b --onlyDet=FV0,FT0
 echo "Digitization finished"
 echo "Clean cerenkov photons from kinetimatics file to reduce size"
 
-root -b RemoveCkov.C
+root -b ${DETSIM_DIR}\/RemoveCkov.C
+mkdir extrafiles
+mv o2sim_HitsFV0.root extrafiles/o2sim_HitsFV0.root
+#mv o2sim_HitsFT0.root extrafiles/o2sim_HitsFT0.root
+mv output_nockov.root extrafiles/output_nockov.root
+rm MCStepLogger* dpl-config.json gphysi.dat hitmerger-simdata* localhost* o2sim* primary-get* tpc_polya.root 
 
 echo "Cerenkovs removed"
 echo "Job is finished!"

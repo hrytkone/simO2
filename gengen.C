@@ -11,6 +11,10 @@
 #if !defined(__CLING__) || defined(__ROOTCLING__)
 #include "FairGenerator.h"
 #include "FairPrimaryGenerator.h"
+
+#include <TDatabasePDG.h>
+#include <TParticlePDG.h>
+#include <TMath.h>
 #include <iostream>
 #include <cstdio>
 #endif
@@ -102,8 +106,11 @@ class GeneralGenerator : public FairGenerator
                 if (previd==-1) previd = eventid;
                 if (entry>0) {
                     if ((Int_t)eventid==previd) {
-                        //if (!SkipParticle(particleid))
-                            primGen->AddTrack((Int_t)particleid, (Double_t)px, (Double_t)py, (Double_t)pz, fm2cm*x, fm2cm*y, fm2cm*z);
+                        if (TMath::Abs(px)==0) px = 1e-9;
+                        if (TMath::Abs(py)==0) py = 1e-9;
+                        if (TMath::Abs(pz)==0) pz = 1e-9;
+
+                        primGen->AddTrack((Int_t)particleid, (Double_t)px, (Double_t)py, (Double_t)pz, fm2cm*x, fm2cm*y, fm2cm*z);
                     } else {
                         previd = eventid;
                         iStartNewEvent = i;
@@ -119,6 +126,8 @@ class GeneralGenerator : public FairGenerator
                     return kFALSE;
                 }
             }
+
+            std::cout << "Sent particles for event id " << eventid << std::endl;	
 
             return kTRUE;
         };
@@ -154,12 +163,14 @@ class GeneralGenerator : public FairGenerator
             std::vector<std::string> badPids{"411", "421", "413", "423", "415", "425",
                                              "431", "433", "435", "511", "521", "513",
                                              "523", "515", "525", "531", "533", "535",
-                                             "541", "543", "545"};
-            std::string str = std::to_string(pid);
-            if (str.size()<3) return false;
-            str = str.substr(str.size() - 3);
+                                             "541", "543", "545", "130", "310"};
+            //std::vector<std::string> badPids{"421", "423", "425", "441", "511", "513", "515"};
+            std::string str = std::to_string(TMath::Abs(pid));
+            //if (str.size()<3) return false;
+            //str = str.substr(str.size() - 3);
             for (auto & i : badPids) {
                 if (i==str) {
+                    std::cout << "Skip particle " << pid << std::endl;
                     return true;
                 }
             }

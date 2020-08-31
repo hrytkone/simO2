@@ -1,7 +1,11 @@
-void RemoveCkov(TString sKineFile = "/run/media/heimarry/aarrearkku/o2-sim-data-5020GeV/cent30-35/o2sim_Kine.root")
+void RemoveCkov(TString sKineFile = "o2sim_Kine.root")
 {
     TFile *fIn = TFile::Open(sKineFile);
     TTree* kineTree = (TTree*)fIn->Get("o2sim");
+
+    kineTree->SetBranchStatus("*", 0);
+    kineTree->SetBranchStatus("MCTrack.mStart*", 1);
+    kineTree->SetBranchStatus("MCTrack.mPdg*", 1);
 
     std::vector<o2::MCTrack>* mctrack = nullptr;
     auto mcbr = kineTree->GetBranch("MCTrack");
@@ -32,7 +36,7 @@ void RemoveCkov(TString sKineFile = "/run/media/heimarry/aarrearkku/o2-sim-data-
         std::cout << ",\tMCtracks : " << nTracks;
         for (auto &track : *mctrack) {
             int pdg = track.GetPdgCode();
-            if (pdg!=50000050) {
+            if (pdg!=50000050 && TMath::Abs(track.GetEta())<5.5) {
                 mctracknew->push_back(track);
                 notCkov++;
             }
