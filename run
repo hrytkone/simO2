@@ -4,15 +4,17 @@ echo "Run O2 detector simulation for given input file ${2}"
 time=$(date)
 echo "Start time : $time"
 
-seed=1000
-jobid=$SLURM_JOB_ID
-seed=$((seed+jobid))
+seed=123
+#seed=1000
+#jobid=$SLURM_JOB_ID
+#seed=$((seed+jobid))
 
 cd ${1}
 
 echo "Processing ${3} events"
 
-o2-sim --seed $seed -j 12 -n ${3} -m FV0 FT0 PIPE ITS -e TGeant3 -g extgen --extGenFile=/n/work00/heimarry/simO2/gengen.C --extGenFunc="gengen("\"${DETSIM_DIR}\/${2}\"")"
+#o2-sim --seed $seed -j 12 -n ${3} -m FV0 FT0 PIPE ITS -e TGeant3 -g extgen --extGenFile=/n/work00/heimarry/simO2/gengen.C --extGenFunc="gengen("\"${DETSIM_DIR}\/${2}\"")"
+o2-sim --seed $seed -j 12 -m FV0 FT0 PIPE ITS -n 10 -e TGeant3 -g pythia8hi
 
 time=$(date)
 echo "Transportation finished : $time"
