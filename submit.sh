@@ -23,8 +23,7 @@ fi
 for (( i=0; i<$njobs; i++ ))
 do
     n=$((i+1))
-    #nevents=$( echo ${inputfiles[$i]#*_n} | grep -o -E '[0-9]+' )
-    nevents=1
+    nevents=$( echo ${inputfiles[$i]#*_n} | grep -o -E '[0-9]+' )
     outputdir=outputs/run_${1}_job$n
     mkdir $outputdir
     mkdir ${outputdir}/logs
